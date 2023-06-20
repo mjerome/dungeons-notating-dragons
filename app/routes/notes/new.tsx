@@ -10,6 +10,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const title = formData.get("title");
   const body = formData.get("body");
+  const characterName = formData.get("character_name");
 
   if (typeof title !== "string" || title.length === 0) {
     return json({ errors: { title: "Title is required" } }, { status: 400 });
@@ -19,7 +20,11 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors: { body: "Body is required" } }, { status: 400 });
   }
 
-  const note = await createNote({ title, body, userId });
+  if (typeof characterName !== "string") {
+    return json({ errors: { character_name: "Dear God, why???" } }, { status: 400 });
+  }
+
+  const note = await createNote({ title, body, characterName, userId });
   return redirect(`/notes/${note.id}`);
 };
 
@@ -39,6 +44,15 @@ export default function NewNotePage() {
           <span>Title: </span>
           <input
             name="title"
+            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+          />
+        </label>
+      </div>
+      <div>
+        <label className="flex w-full flex-col gap-1">
+          <span>Character Name: </span>
+          <input
+            name="character_name"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
           />
         </label>

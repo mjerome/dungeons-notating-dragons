@@ -5,6 +5,7 @@ export type Note = {
   id: string;
   title: string;
   body: string;
+  characterName?: string;
   profile_id: string;
 };
 
@@ -20,11 +21,12 @@ export async function getNoteListItems({ userId }: { userId: User["id"] }) {
 export async function createNote({
   title,
   body,
+  characterName,
   userId,
-}: Pick<Note, "body" | "title"> & { userId: User["id"] }) {
+}: Pick<Note, "body" | "title" | "characterName"> & { userId: User["id"] }) {
   const { data, error } = await supabase
     .from("notes")
-    .insert([{ title, body, profile_id: userId }])
+    .insert([{ title, body, character_name: characterName, profile_id: userId }])
     .single();
 
   if (!error) {
@@ -67,6 +69,7 @@ export async function getNote({
       id: data.id,
       title: data.title,
       body: data.body,
+      characterName: data.character_name,
     };
   }
 
